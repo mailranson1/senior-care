@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Senior Care">
+<meta name="theme-color" content="#1a3e6e">
+<title>Senior Care Volunteer Training</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:-apple-system,'PingFang SC','Heiti TC','Segoe UI',Arial,sans-serif;
+  background:#f0f4f8;color:#222;min-height:100vh;
+  -webkit-text-size-adjust:100%;
+}
+
+/* ── Header ── */
+.hdr{
+  background:linear-gradient(135deg,#1a3e6e,#2e5fa3);
+  color:#fff;
+  padding:14px 16px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:50;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.hdr-icon{font-size:1.8rem;flex-shrink:0}
+.hdr h1{font-size:1rem;font-weight:700;line-height:1.3}
+.hdr p{font-size:.7rem;opacity:.85;margin-top:2px}
+
+/* ── How-to-open banner ── */
+.open-tip{
+  background:#e8f4fd;border-bottom:2px solid #aed6f1;
+  padding:10px 16px;font-size:.8rem;color:#1a5276;line-height:1.6;
+}
+.open-tip strong{display:block;margin-bottom:3px;font-size:.85rem}
+.open-tip ol{margin-left:18px}
+.open-tip li{margin-bottom:2px}
+
+/* ── Voice status bar ── */
+.voice-bar{
+  padding:8px 14px;font-size:.75rem;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+}
+.voice-bar.ok  {background:#e8f5e9;color:#1b5e20}
+.voice-bar.warn{background:#fff3e0;color:#e65100}
+.voice-bar.init{background:#f3e5f5;color:#6a1b9a}
+
+/* ── Controls ── */
+.ctrl-bar{
+  background:#fff;border-bottom:1px solid #dde3ec;
+  padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+.cg{display:flex;align-items:center;gap:6px;font-size:.8rem;color:#555}
+.cg label{font-weight:700;white-space:nowrap}
+input[type=range]{
+  -webkit-appearance:none;height:4px;border-radius:2px;
+  background:#c8d4e8;cursor:pointer;width:90px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:22px;height:22px;
+  border-radius:50%;background:#2e5fa3;cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+.spd{font-size:.78rem;color:#888;min-width:30px}
+.mode-tog{display:flex;background:#eef2f8;border-radius:10px;overflow:hidden;border:1px solid #c8d4e8}
+.mode-tog button{
+  border:none;background:none;padding:7px 14px;
+  font-size:.8rem;cursor:pointer;color:#555;font-weight:700;
+  min-height:36px;transition:background .2s,color .2s;
+}
+.mode-tog button.on{background:#2e5fa3;color:#fff;border-radius:9px}
+
+/* ── Tabs ── */
+.tabs{
+  display:flex;background:#fff;
+  border-bottom:2px solid #dde3ec;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  padding:10px 14px;border:none;background:none;
+  font-size:.8rem;font-weight:700;cursor:pointer;color:#666;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+  white-space:nowrap;min-height:44px;flex-shrink:0;
+  transition:color .2s;
+}
+.tab.ab{color:#2e5fa3;border-bottom-color:#2e5fa3}
+.tab.ai{color:#2e7a6b;border-bottom-color:#2e7a6b}
+.tab.as{color:#7b3fa0;border-bottom-color:#7b3fa0}
+.tab:active{background:#f5f5f5}
+
+/* ── Page wrapper ── */
+.page{max-width:680px;margin:0 auto;padding:14px;
+      padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+
+/* ── Browse cards ── */
+.subsec{background:#fff;border-radius:14px;
+        box-shadow:0 1px 5px rgba(0,0,0,.07);
+        overflow:hidden;margin-bottom:14px}
+.subsec-hdr{padding:10px 14px;font-weight:700;font-size:.82rem}
+.qpair{border-top:1px solid #eef1f7}
+.qcard{padding:14px;border-left:4px solid #ccc}
+.qcard.v{border-left-color:#4caf7d}
+.qcard.s{border-left-color:#f0a500}
+.badge{
+  display:inline-block;font-size:.67rem;font-weight:700;
+  border-radius:4px;padding:2px 7px;margin-bottom:7px;
+  text-transform:uppercase;letter-spacing:.4px;
+}
+.bv{background:#e6f4ec;color:#2a7a4f}
+.bs{background:#fff5df;color:#996800}
+.zh{
+  font-size:1.12rem;color:#111;line-height:1.7;
+  font-family:'PingFang SC','Heiti TC','SimSun','Microsoft YaHei',serif;
+}
+.py{font-size:.8rem;color:#7a8aaa;font-style:italic;margin-top:4px;line-height:1.5}
+.en{font-size:.8rem;color:#2e5fa3;margin-top:5px;line-height:1.4}
+.en.sg{color:#996800}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hbtn{
+  border:none;border-radius:10px;padding:9px 16px;
+  font-size:.8rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:5px;
+  min-height:42px;transition:transform .15s,filter .15s;
+  -webkit-user-select:none;
+}
+.hbtn:active{transform:scale(.94);filter:brightness(.88)}
+.hbtn.nb{background:#2e5fa3;color:#fff}
+.hbtn.sl{background:#5b7fbf;color:#fff}
+.hbtn.ni{background:#2e7a6b;color:#fff}
+.hbtn.si{background:#4d9e8e;color:#fff}
+.hbtn.np{background:#7b3fa0;color:#fff}
+.hbtn.sp{background:#9d63c0;color:#fff}
+.hbtn.ns{background:#f0a500;color:#fff}
+.hbtn.ss{background:#c8870a;color:#fff}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.hbtn.playing{animation:pulse .7s infinite}
+
+/* ── Train card ── */
+.tcard{
+  background:#fff;border-radius:16px;
+  box-shadow:0 2px 14px rgba(0,0,0,.1);
+  padding:22px;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.tcard{animation:fadeUp .22s ease}
+.tprog{font-size:.75rem;color:#999;margin-bottom:5px}
+.tsub{
+  font-size:.78rem;font-weight:700;letter-spacing:.3px;
+  padding:3px 10px;border-radius:6px;
+  display:inline-block;margin-bottom:14px;
+}
+.tzh{
+  font-size:1.35rem;color:#111;line-height:1.7;
+  font-family:'PingFang SC','Heiti TC','SimSun','Microsoft YaHei',serif;
+  margin-bottom:8px;
+}
+.tpy{font-size:.9rem;color:#7a8aaa;font-style:italic;margin-bottom:8px;line-height:1.5}
+.ten{
+  font-size:.85rem;color:#2e5fa3;
+  background:#f0f5ff;border-radius:8px;
+  padding:10px 12px;margin-bottom:16px;line-height:1.5;
+}
+.thear{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.tbtn{
+  border:none;border-radius:12px;padding:12px 18px;
+  font-size:.88rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  min-height:50px;flex:1;justify-content:center;
+  transition:transform .15s,filter .15s;-webkit-user-select:none;
+}
+.tbtn:active{transform:scale(.94);filter:brightness(.88)}
+.exbox{
+  background:#fffbee;border:1px solid #f5dfa0;
+  border-radius:10px;padding:12px;margin-bottom:16px;
+}
+.exlbl{font-size:.68rem;font-weight:700;color:#996800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.exzh{font-size:.95rem;color:#333;font-family:'PingFang SC','Heiti TC','SimSun',serif;line-height:1.5}
+.exen{font-size:.8rem;color:#777;margin-top:4px;line-height:1.4}
+.exbtn{
+  border:none;background:#f0a500;color:#fff;
+  border-radius:8px;padding:7px 12px;font-size:.76rem;
+  font-weight:700;cursor:pointer;margin-top:8px;
+  display:inline-flex;align-items:center;gap:4px;min-height:38px;
+}
+.exbtn:active{filter:brightness(.88)}
+.tnav{display:flex;align-items:center;gap:10px}
+.navb{
+  border:none;border-radius:12px;padding:12px 16px;
+  font-size:.85rem;font-weight:700;cursor:pointer;
+  background:#eef2f8;color:#444;
+  display:flex;align-items:center;gap:5px;
+  min-height:50px;transition:background .2s,color .2s;
+}
+.navb:active:not([disabled]){background:#2e5fa3;color:#fff}
+.navb[disabled]{opacity:.3;cursor:not-allowed}
+.tctr{font-size:.82rem;color:#888;flex:1;text-align:center}
+.pbar{background:#eef2f8;border-radius:8px;height:5px;overflow:hidden;margin-bottom:4px}
+.pfill{height:100%;border-radius:8px;transition:width .3s}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-icon">🏥</div>
+  <div>
+    <h1>Senior Care Volunteer Training</h1>
+    <p>Chinese Pronunciation Guide &nbsp;|&nbsp; 华语长者护理志愿者培训</p>
+  </div>
+</div>
+
+<!-- HOW TO OPEN ON iPHONE -->
+<div class="open-tip">
+  <strong>📱 iPhone — How to open this file in Safari:</strong>
+  <ol>
+    <li>Go to the <strong>Files</strong> app → Downloads</li>
+    <li>Press and <strong>hold</strong> the file</li>
+    <li>Tap <strong>Share</strong> → then tap <strong>Safari</strong></li>
+    <li>Once open in Safari, tap <strong>Share → Add to Home Screen</strong> to save it as an app icon</li>
+  </ol>
+</div>
+
+<!-- VOICE STATUS -->
+<div class="voice-bar init" id="vbar">⏳ Tap any Hear button to activate the Chinese voice…</div>
+
+<!-- CONTROLS -->
+<div class="ctrl-bar">
+  <div class="cg">
+    <label>Mode:</label>
+    <div class="mode-tog">
+      <button id="mBrowse" class="on" onclick="setMode('browse')">📋 Browse</button>
+      <button id="mTrain"  onclick="setMode('train')">🎓 Train</button>
+    </div>
+  </div>
+  <div class="cg">
+    <label>Speed:</label>
+    <input type="range" id="spdRange" min="0.5" max="1.3" step="0.1" value="0.85"
+      oninput="spd=parseFloat(this.value);document.getElementById('spdLbl').textContent=spd.toFixed(1)+'×'">
+    <span class="spd" id="spdLbl">0.85×</span>
+  </div>
+  <div class="cg">
+    <label>Examples:</label>
+    <input type="checkbox" id="exChk" checked onchange="render()">
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab ab" data-s="badl"   onclick="switchSec('badl')">🟦 BADL — Physical</button>
+  <button class="tab"    data-s="iadl"   onclick="switchSec('iadl')">🟩 IADL — Daily Tasks</button>
+  <button class="tab"    data-s="social" onclick="switchSec('social')">🟪 Social &amp; Psych</button>
+</div>
+
+<!-- CONTENT -->
+<div class="page" id="pg"></div>
+
+<script>
+// ════════════════════════════════════════════
+// ALL QUESTION DATA
+// ════════════════════════════════════════════
+const D={
+  badl:{c:"#2e5fa3",bg:"#dce9f8",tc:"#1a3e6e",
+    ss:[
+      {t:"Greeting / 问候 (Wènhòu)",ps:[
+        {v:{z:"您好，我叫[姓名]。我是社区的志愿者。请问您今天感觉怎么样？",p:"Nín hǎo, wǒ jiào [míngzì]. Wǒ shì shèqū de zhìyuànzhě. Qǐngwèn nín jīntiān gǎnjué zěnme yàng?",e:"Hello, my name is [Name]. I am a community volunteer. How are you feeling today?"},
+         s:{z:"你好，我还好，谢谢你来看我。",e:"Hello, I'm okay. Thank you for coming to see me."}},
+        {v:{z:"我想了解一下您日常生活的情况，希望能为您提供帮助。您方便回答几个问题吗？",p:"Wǒ xiǎng liǎojiě nín rìcháng shēnghuó de qíngkuàng. Nín fāngbiàn huídá jǐ gè wèntí ma?",e:"I'd like to learn about your daily living so I can help you. Are you comfortable answering a few questions?"},
+         s:{z:"当然可以，谢谢你。",e:"Of course, thank you."}},
+      ]},
+      {t:"Bed Transfer / 起床与转移 (Qǐchuáng yǔ zhuǎnyí)",ps:[
+        {v:{z:"您早上能自己从床上起来吗？",p:"Nín zǎoshang néng zìjǐ cóng chuáng shàng qǐlái ma?",e:"Can you get out of bed by yourself in the morning?"},
+         s:{z:"有点困难，我需要有人帮助我。",e:"It is a bit difficult. I need someone to help me."}},
+        {v:{z:"您有使用辅助器具吗？比如床栏或助行架？",p:"Nín yǒu shǐyòng fǔzhù qìjù ma? Bǐrú chuánglán huò zhùxíng jià?",e:"Do you use any assistive equipment, such as bed rails or a walking frame?"},
+         s:{z:"我有床栏，但有时候起身还是很困难。",e:"I have bed rails, but sometimes getting up is still very difficult."}},
+        {v:{z:"您有没有从床上跌落或险些跌落过？",p:"Nín yǒu méiyǒu cóng chuáng shàng diēluò huò xiǎnxiē diēluò guò?",e:"Have you ever fallen or nearly fallen out of bed?"},
+         s:{z:"有，上个月我差点摔下来，把我吓坏了。",e:"Yes, last month I almost fell off and it frightened me badly."}},
+      ]},
+      {t:"Mobility / 行动能力 (Xíngdòng nénglì)",ps:[
+        {v:{z:"您能自己在家里走动吗？",p:"Nín néng zìjǐ zài jiālǐ zǒudòng ma?",e:"Can you walk around the house by yourself?"},
+         s:{z:"我用拐杖。没有它，我走不稳。",e:"I use a walking stick. Without it I cannot walk steadily."}},
+        {v:{z:"您最近有没有跌倒过？",p:"Nín zuìjìn yǒu méiyǒu diēdǎo guò?",e:"Have you had any falls recently?"},
+         s:{z:"是的，我上个月在浴室跌倒了。",e:"Yes, I fell in the bathroom last month."}},
+        {v:{z:"您能自己上下楼梯吗？",p:"Nín néng zìjǐ shàng xià lóutī ma?",e:"Can you go up and down stairs by yourself?"},
+         s:{z:"不行，太危险了。我通常留在楼上。",e:"No, it is too dangerous. I usually stay upstairs."}},
+        {v:{z:"您出门时需要有人陪同吗？",p:"Nín chū mén shí xūyào yǒurén péitóng ma?",e:"Do you need someone to accompany you when going out?"},
+         s:{z:"是的，我自己不敢出去。",e:"Yes, I do not dare to go out alone."}},
+      ]},
+      {t:"Toileting / 如厕 (Rú cè)",ps:[
+        {v:{z:"您能自己上厕所吗？",p:"Nín néng zìjǐ shàng cèsuǒ ma?",e:"Can you use the toilet by yourself?"},
+         s:{z:"我可以，但是坐下和起身很困难。",e:"I can manage, but sitting down and getting up is very difficult."}},
+        {v:{z:"您有没有来不及上厕所，发生漏尿的情况？",p:"Nín yǒu méiyǒu lái bù jí shàng cèsuǒ, fāshēng lòuniào de qíngkuàng?",e:"Do you sometimes not make it to the toilet in time?"},
+         s:{z:"有时候会。这让我很担心，也很不好意思。",e:"Sometimes. This worries me and I feel embarrassed."}},
+        {v:{z:"您的厕所里有扶手吗？",p:"Nín de cèsuǒ lǐ yǒu fúshǒu ma?",e:"Does your toilet have grab bars?"},
+         s:{z:"没有，我一直想安装一个，但不知道找谁。",e:"No. I have been wanting to install one but do not know who to contact."}},
+      ]},
+      {t:"Bathing / 洗澡 (Xǐzǎo)",ps:[
+        {v:{z:"您能自己洗澡吗？",p:"Nín néng zìjǐ xǐzǎo ma?",e:"Can you bathe or shower by yourself?"},
+         s:{z:"很困难。我很害怕在浴室里滑倒。",e:"It is very difficult. I am afraid of slipping in the bathroom."}},
+        {v:{z:"有人帮您洗澡吗？",p:"Yǒurén bāng nín xǐzǎo ma?",e:"Does anyone help you bathe?"},
+         s:{z:"我女儿周末来帮我。其他时候我只是用毛巾擦身体。",e:"My daughter comes on weekends. On other days I just wipe myself with a towel."}},
+        {v:{z:"您的浴室有防滑垫或扶手吗？",p:"Nín de yùshì yǒu fánghúa diàn huò fúshǒu ma?",e:"Does your bathroom have non-slip mats or grab bars?"},
+         s:{z:"有防滑垫，但没有扶手。",e:"There is a non-slip mat but no grab bars."}},
+        {v:{z:"您有没有考虑使用洗澡椅？这样会安全一些。",p:"Nín yǒu méiyǒu kǎolǜ shǐyòng xǐzǎo yǐ?",e:"Have you considered using a shower chair? That would be safer."},
+         s:{z:"没有想过，但听起来很好。",e:"I have not thought of that, but it sounds like a good idea."}},
+      ]},
+      {t:"Dressing / 穿衣 (Chuānyī)",ps:[
+        {v:{z:"您能自己穿衣服吗？",p:"Nín néng zìjǐ chuān yīfú ma?",e:"Can you dress yourself?"},
+         s:{z:"我能穿简单的衣服，但是扣扣子很困难。",e:"I can put on simple clothes, but doing up buttons is very difficult."}},
+        {v:{z:"穿袜子和鞋子呢？",p:"Chuān wàzi hé xiézi ne?",e:"What about putting on socks and shoes?"},
+         s:{z:"非常困难。我弯不下腰。",e:"Very difficult. I cannot bend down."}},
+        {v:{z:"有没有特别难穿的衣物，比如内衣或外套？",p:"Yǒu méiyǒu tèbié nán chuān de yīwù, bǐrú nèiyī huò wàitào?",e:"Are there any items that are especially hard to put on, like underwear or jackets?"},
+         s:{z:"内衣和外套都很难自己穿。",e:"Both underwear and jackets are very hard to put on myself."}},
+      ]},
+      {t:"Dining / 饮食 (Yǐnshí)",ps:[
+        {v:{z:"您能自己做饭吗？",p:"Nín néng zìjǐ zuòfàn ma?",e:"Can you prepare your own meals?"},
+         s:{z:"以前能，但现在太累了。我吃家人送来的食物。",e:"I could before, but now it is too tiring. I eat food that my family brings."}},
+        {v:{z:"您咀嚼或吞咽食物有困难吗？",p:"Nín jǔjué huò tūnyàn shíwù yǒu kùnnán ma?",e:"Do you have any difficulty chewing or swallowing food?"},
+         s:{z:"有时候食物会卡在喉咙里，很不舒服。",e:"Sometimes food gets stuck in my throat, which is very uncomfortable."}},
+        {v:{z:"您每天吃几餐？吃得够吗？",p:"Nín měitiān chī jǐ cān? Chī de gòu ma?",e:"How many meals do you eat each day? Are you eating enough?"},
+         s:{z:"一天只吃两餐。我没有什么胃口。",e:"Only two meals a day. I don't have much appetite."}},
+        {v:{z:"医生有没有给您特别的饮食要求，比如少盐或低糖？",p:"Yīshēng yǒu méiyǒu gěi nín tèbié de yǐnshí yāoqiú?",e:"Has the doctor given you any special dietary requirements, such as low salt or low sugar?"},
+         s:{z:"医生说我要少盐少油，还要多喝水。",e:"The doctor said I should eat less salt and oil, and drink more water."}},
+      ]},
+    ]
+  },
+  iadl:{c:"#2e7a6b",bg:"#d5ede9",tc:"#1a4a42",
+    ss:[
+      {t:"Greeting / 问候 (Wènhòu)",ps:[
+        {v:{z:"您好！我是社区志愿者。今天我想了解一下您在家里的日常事务，看看哪些方面需要帮助。",p:"Nín hǎo! Wǒ shì shèqū zhìyuànzhě. Jīntiān wǒ xiǎng liǎojiě nín zài jiālǐ de rìcháng shìwù.",e:"Hello! I am a community volunteer. I would like to understand your daily household activities and see where you may need help."},
+         s:{z:"好的，谢谢你愿意来帮忙。",e:"Alright, thank you for being willing to help."}},
+      ]},
+      {t:"Housekeeping / 家务 (Jiāwù)",ps:[
+        {v:{z:"您能自己做家务吗？比如扫地、拖地或者整理房间？",p:"Nín néng zìjǐ zuò jiāwù ma? Bǐrú sǎo dì, tuō dì huòzhě zhěnglǐ fángjiān?",e:"Can you do household chores — such as sweeping, mopping, or tidying the room?"},
+         s:{z:"很困难了。弯腰扫地会腰痛，拖地也没有力气。",e:"It is very difficult. Bending to sweep causes back pain and I have no strength to mop."}},
+        {v:{z:"洗衣服呢？您能自己操作洗衣机吗？",p:"Xǐ yīfú ne? Nín néng zìjǐ cāozuò xǐyījī ma?",e:"What about laundry? Can you operate the washing machine by yourself?"},
+         s:{z:"我能放衣服进去，但是把衣服拿出来晾干很费力。",e:"I can put the clothes in, but taking them out to hang dry is very tiring."}},
+        {v:{z:"您家里的垃圾能自己拿出去吗？",p:"Nín jiālǐ de lājī néng zìjǐ ná chū qù ma?",e:"Can you take your household rubbish out by yourself?"},
+         s:{z:"不太行。垃圾桶很重，我搬不动。",e:"Not really. The bin is too heavy and I cannot carry it."}},
+      ]},
+      {t:"Transportation / 交通出行 (Jiāotōng chūxíng)",ps:[
+        {v:{z:"您现在还能自己出门吗？",p:"Nín xiànzài hái néng zìjǐ chū mén ma?",e:"Are you still able to go out by yourself?"},
+         s:{z:"很少出门了。我自己不敢一个人走太远。",e:"I rarely go out now. I do not dare to walk too far on my own."}},
+        {v:{z:"您去看医生时，怎么去的？",p:"Nín qù kàn yīshēng shí, zěnme qù de?",e:"How do you travel when you need to see a doctor?"},
+         s:{z:"通常等孩子有空才送我去，有时候等很久。",e:"I usually wait until my children are free to take me. Sometimes I wait a very long time."}},
+        {v:{z:"您知道社区有没有老人低价的接送服务吗？",p:"Nín zhīdào shèqū yǒu méiyǒu lǎorén dījià de jiēsòng fúwù ma?",e:"Are you aware of any low-cost transport services for seniors in the community?"},
+         s:{z:"不知道。如果有就太好了。",e:"I did not know about that. It would be wonderful if there is."}},
+      ]},
+      {t:"Meal Preparation / 备餐 (Bèi cān)",ps:[
+        {v:{z:"您现在能自己做饭吗？",p:"Nín xiànzài néng zìjǐ zuòfàn ma?",e:"Can you cook for yourself now?"},
+         s:{z:"以前很爱做饭，但现在站太久会头晕，也怕炉火有危险。",e:"I used to love cooking, but now standing too long makes me dizzy and I worry about the stove being dangerous."}},
+        {v:{z:"您一般怎么解决一日三餐？",p:"Nín yībān zěnme jiějué yī rì sān cān?",e:"How do you manage your three meals a day generally?"},
+         s:{z:"孩子有时候送饭来，但不是每天。有时候就吃饼干或者泡面。",e:"My children sometimes bring food, but not every day. Sometimes I just eat biscuits or instant noodles."}},
+        {v:{z:"您知道社区有没有送餐服务，为老人提供热食？",p:"Nín zhīdào shèqū yǒu méiyǒu sòngcān fúwù, wèi lǎorén tígōng rèshí?",e:"Do you know if there is a meal-delivery service providing hot meals for seniors?"},
+         s:{z:"听说过，但不知道怎么申请。",e:"I have heard of it, but I do not know how to apply."}},
+      ]},
+      {t:"Shopping / 购物 (Gòuwù)",ps:[
+        {v:{z:"您现在能自己去超市买东西吗？",p:"Nín xiànzài néng zìjǐ qù chāoshì mǎi dōngxi ma?",e:"Can you go to the supermarket to shop by yourself?"},
+         s:{z:"不行了。走路太累，拿东西也没力气。",e:"No. Walking is too tiring and I have no strength to carry things."}},
+        {v:{z:"您知道怎么网上购物吗？",p:"Nín zhīdào zěnme wǎngshàng gòuwù ma?",e:"Do you know how to shop online?"},
+         s:{z:"我不会用手机购物。眼睛也不好，看不清楚屏幕。",e:"I do not know how to shop on the phone. My eyesight is also poor and I cannot see the screen clearly."}},
+        {v:{z:"如果有志愿者帮您每周采购一次，您觉得有帮助吗？",p:"Rúguǒ yǒu zhìyuànzhě bāng nín měi zhōu cǎigòu yīcì, nín juéde yǒu bāngzhù ma?",e:"If a volunteer helped you with grocery shopping once a week, would that be helpful?"},
+         s:{z:"那真的太感谢了，帮了我大忙。",e:"I would be truly grateful — that would be a great help."}},
+      ]},
+      {t:"Managing Medications / 管理药物 (Guǎnlǐ yàowù)",ps:[
+        {v:{z:"您现在有在服用药物吗？",p:"Nín xiànzài yǒu zài fúyòng yàowù ma?",e:"Are you currently taking any medications?"},
+         s:{z:"有，我有高血压和糖尿病，每天要吃好几种药。",e:"Yes. I have high blood pressure and diabetes and need to take several types of medication every day."}},
+        {v:{z:"您能记得每天按时吃药吗？",p:"Nín néng jìde měitiān ànshí chī yào ma?",e:"Can you remember to take your medication on time every day?"},
+         s:{z:"有时候会忘记，特别是吃了晚饭以后的药。",e:"Sometimes I forget, especially the medication I need to take after dinner."}},
+        {v:{z:"您知道每种药的用途吗？有没有弄错过？",p:"Nín zhīdào měi zhǒng yào de yòngtú ma? Yǒu méiyǒu nòng cuò guò?",e:"Do you know the purpose of each medication? Have you ever taken the wrong one?"},
+         s:{z:"药太多了，有时候搞不清楚哪一颗是哪一颗。",e:"There are too many medications. Sometimes I cannot tell which pill is which."}},
+        {v:{z:"您有没有使用药盒来分装每天的药？",p:"Nín yǒu méiyǒu shǐyòng yào hé lái fēn zhuāng měitiān de yào?",e:"Do you use a pill organiser to sort your daily medications?"},
+         s:{z:"没有。不知道去哪里买，也不太会用。",e:"No. I do not know where to buy one and am not sure how to use it."}},
+      ]},
+      {t:"Managing Finances / 财务管理 (Cáiwù guǎnlǐ)",ps:[
+        {v:{z:"您现在能自己管理日常的费用，比如缴账单或者取钱吗？",p:"Nín xiànzài néng zìjǐ guǎnlǐ rìcháng de fèiyòng, bǐrú jiǎo zhàngdān huòzhě qǔ qián ma?",e:"Can you manage your daily finances — such as paying bills or withdrawing cash?"},
+         s:{z:"以前没问题，但是现在记性不好，有时候忘记缴费。",e:"It was fine before, but now my memory is poor and I sometimes forget to pay bills."}},
+        {v:{z:"您有没有遇到过有人打电话，要求您转账或提供银行账号？",p:"Nín yǒu méiyǒu yùdào guò yǒurén dǎ diànhuà, yāoqiú nín zhuǎnzhàng?",e:"Have you ever had someone call asking you to transfer money or provide your bank account details?"},
+         s:{z:"有！上个月有人打电话说我欠了罚款，我差点汇钱过去。",e:"Yes! Last month someone called and said I owed a fine. I almost transferred the money."}},
+        {v:{z:"以后遇到这种情况，请不要汇款，先联系家人或者我们。",p:"Yǐhòu yùdào zhè zhǒng qíngkuàng, qǐng bùyào huì kuǎn, xiān liánxì jiārén huòzhě wǒmen.",e:"In future, if this happens, please do not transfer any money — contact your family or us first."},
+         s:{z:"好的，我明白了。谢谢你提醒我。",e:"Alright, I understand. Thank you for reminding me."}},
+      ]},
+    ]
+  },
+  social:{c:"#7b3fa0",bg:"#ede0f5",tc:"#4a235a",
+    ss:[
+      {t:"Greeting / 问候 (Wènhòu)",ps:[
+        {v:{z:"您好！很高兴再次来看您。今天我想多了解一下您的生活状况和心情，希望能更好地帮助您。",p:"Nín hǎo! Hěn gāoxìng zài cì lái kàn nín. Jīntiān wǒ xiǎng liǎojiě nín de shēnghuó zhuàngkuàng hé xīnqíng.",e:"Hello! It is lovely to see you again. Today I would like to learn more about your living situation and how you are feeling."},
+         s:{z:"谢谢你，能有人来关心我，我很感激。",e:"Thank you. I am very grateful that someone comes to care about me."}},
+        {v:{z:"接下来我会问您一些关于家庭和日常生活的问题。请放心，所有内容都是保密的。",p:"Jiē xiàlái wǒ huì wèn nín yīxiē guānyú jiātíng hé rìcháng shēnghuó de wèntí. Qǐng fàngxīn, suǒyǒu nèiróng dōu shì bǎomì de.",e:"I will ask some questions about your family and daily life. Please be assured everything is confidential."},
+         s:{z:"好的，我明白，你问吧。",e:"Alright, I understand. Please go ahead and ask."}},
+      ]},
+      {t:"Living Situation / 居住状况 (Jūzhù zhuàngkuàng)",ps:[
+        {v:{z:"请问您现在是一个人住吗？",p:"Qǐngwèn nín xiànzài shì yīgè rén zhù ma?",e:"Are you currently living alone?"},
+         s:{z:"是的，我自己一个人住，已经好几年了。",e:"Yes, I live alone. It has been several years now."}},
+        {v:{z:"您的配偶还在吗？",p:"Nín de pèi'ǒu hái zài ma?",e:"Is your spouse still alive?"},
+         s:{z:"我先生三年前去世了。那以后我就一个人了。",e:"My husband passed away three years ago. After that I have been on my own."}},
+        {v:{z:"您的子女住得近吗？他们常来看您吗？",p:"Nín de zǐnǚ zhù de jìn ma? Tāmen cháng lái kàn nín ma?",e:"Do your children live nearby? Do they come to visit often?"},
+         s:{z:"孩子们住得不太近，工作很忙。大概每个月来一两次。",e:"My children do not live very close by. They come about once or twice a month."}},
+        {v:{z:"如果您晚上突然不舒服，有人可以第一时间帮您吗？",p:"Rúguǒ nín wǎnshàng tūrán bù shūfú, yǒurén kěyǐ dìyī shíjiān bāng nín ma?",e:"If you suddenly feel unwell at night, is there someone who can help you immediately?"},
+         s:{z:"没有。这是我最担心的事情，如果出了什么事，没人知道。",e:"No. This is what I worry about most. If something happens to me, no one would know."}},
+      ]},
+      {t:"Informal Support / 非正式支持 (Fēi zhèngshì zhīchí)",ps:[
+        {v:{z:"平时有没有家人、朋友或者邻居，会定期来帮助您处理日常事务？",p:"Píngshí yǒu méiyǒu jiārén, péngyǒu huòzhě línjū, huì dìngqī lái bāngzhù nín?",e:"Are there family members, friends or neighbours who regularly come to help you with daily matters?"},
+         s:{z:"我有一个好心的邻居，偶尔会来敲门问我好不好。",e:"I have a kind neighbour who occasionally knocks on the door to check on me."}},
+        {v:{z:"您的孩子平时会打电话联系您吗？多久一次？",p:"Nín de háizi píngshí huì dǎ diànhuà liánxì nín ma? Duō jiǔ yīcì?",e:"Do your children call you regularly? How often?"},
+         s:{z:"他们会打电话，大概一个星期一两次。有时候很忙就忘记了。",e:"They do call, about once or twice a week. Sometimes when they are very busy they forget."}},
+        {v:{z:"总的来说，您觉得在需要帮助的时候，有足够的人可以依靠吗？",p:"Zǒng de lái shuō, nín juéde zài xūyào bāngzhù de shíhòu, yǒu zúgòu de rén kěyǐ yīkào ma?",e:"Overall, do you feel that when you need help, there are enough people you can rely on?"},
+         s:{z:"说实话，不太够。很多时候还是靠自己，很无奈。",e:"Honestly, not quite enough. A lot of the time I still rely on myself. It can feel quite helpless."}},
+      ]},
+      {t:"Social Interactions / 社交互动 (Shèjiāo hùdòng)",ps:[
+        {v:{z:"您平时有没有和其他人交流、聊天或者一起活动的机会？",p:"Nín píngshí yǒu méiyǒu hé qítā rén jiāoliú, liáotiān huòzhě yīqǐ huódòng de jīhuì?",e:"Do you have opportunities to interact, chat or do activities with other people?"},
+         s:{z:"很少。自从行动不方便了，就很少出门，也越来越少见到人。",e:"Very rarely. Since my mobility became limited, I seldom go out and I see fewer and fewer people."}},
+        {v:{z:"您有没有参加任何社区活动，比如老人活动中心或者兴趣小组？",p:"Nín yǒu méiyǒu cānjiā shèqū huódòng, bǐrú lǎorén huódòng zhōngxīn huòzhě xìngqù xiǎozǔ?",e:"Do you participate in any community activities, such as a senior activity centre or interest group?"},
+         s:{z:"以前会去社区活动中心打太极，但后来腿脚不好就停了。",e:"I used to go to the community activity centre for Tai Chi, but I stopped when my legs got worse."}},
+        {v:{z:"您最近一次和家人以外的人聊天，是什么时候？",p:"Nín zuìjìn yīcì hé jiārén yǐwài de rén liáotiān, shì shénme shíhòu?",e:"When was the last time you had a conversation with someone outside your family?"},
+         s:{z:"上个星期有一个推销员来敲门，我和他说了几句话。",e:"Last week a salesperson came to the door and I exchanged a few words with him."}},
+      ]},
+      {t:"Degree of Loneliness / 孤独感 (Gūdú gǎn)",ps:[
+        {v:{z:"我想问您一个比较私人的问题，希望您不介意。您平时会感到孤独或者寂寞吗？",p:"Wǒ xiǎng wèn nín yīgè bǐjiào sīrén de wèntí, xīwàng nín bù jièyì. Nín píngshí huì gǎndào gūdú huòzhě jìmò ma?",e:"I would like to ask a rather personal question, I hope you don't mind. Do you often feel lonely or isolated?"},
+         s:{z:"说实话，很寂寞。特别是到了晚上，一个人看着四面墙，心里很难受。",e:"Honestly, very lonely. Especially at night — sitting alone looking at four walls — I feel very sad inside."}},
+        {v:{z:"您有没有经常感到悲伤或者情绪低落？",p:"Nín yǒu méiyǒu jīngcháng gǎndào bēishāng huòzhě qíngxù dīluò?",e:"Do you often feel sad or low in mood?"},
+         s:{z:"有时候会。特别是逢年过节，看到别人家热热闹闹，自己家冷冷清清。",e:"Sometimes yes. Especially during festive seasons — seeing other families so lively while my home is so quiet."}},
+        {v:{z:"您有没有想过，觉得自己是别人的负担？",p:"Nín yǒu méiyǒu xiǎngguò, juéde zìjǐ shì biérén de fùdān?",e:"Have you ever had thoughts that you are a burden to others?"},
+         s:{z:"有时候会这样想。觉得自己老了，什么都做不了，只是让孩子担心。",e:"Sometimes I do think that way. I feel I am old, I cannot do anything, and I only make my children worry."}},
+        {v:{z:"您最近睡眠怎么样？",p:"Nín zuìjìn shuìmián zěnme yàng?",e:"How has your sleep been recently?"},
+         s:{z:"睡不太好。经常半夜醒来，然后想东想西，很难再睡着。",e:"Not very well. I often wake up in the middle of the night and my mind starts wandering."}},
+      ]},
+      {t:"Support & Aspirations / 支持与愿望 (Zhīchí yǔ yuànwàng)",ps:[
+        {v:{z:"目前有没有志愿者或者任何服务机构在帮助您？",p:"Mùqián yǒu méiyǒu zhìyuànzhě huòzhě rènhé fúwù jīgòu zài bāngzhù nín?",e:"Are there currently any volunteers or service organisations helping you?"},
+         s:{z:"只有你，其他的还没有。",e:"Only you. There are no others yet."}},
+        {v:{z:"在您的日常生活里，哪些事情是您最需要帮助，但目前还没有人帮您的？",p:"Zài nín de rìcháng shēnghuó lǐ, nǎxiē shìqíng shì nín zuì xūyào bāngzhù, dàn méiyǒu rén bāng nín de?",e:"In your daily life, what are the things you most need help with but currently have no one to assist you with?"},
+         s:{z:"买东西、家里打扫和医院复诊。这三件事最难解决。",e:"Shopping, housecleaning and getting to medical follow-up appointments. These three are the hardest."}},
+        {v:{z:"情感上，有没有需要有人定期来陪您聊天？",p:"Qínggǎn shàng, yǒu méiyǒu xūyào yǒurén dìngqī lái péi nín liáotiān?",e:"Emotionally, do you feel you need someone to come and chat with you regularly?"},
+         s:{z:"非常需要。有时候好几天都没有人来，那种孤独感很难受。",e:"Very much so. Sometimes several days go by without anyone visiting. That feeling of loneliness is very hard to bear."}},
+        {v:{z:"如果可以的话，您最希望每天的生活是怎样的？什么会让您感到快乐？",p:"Rúguǒ kěyǐ de huà, nín zuì xīwàng měitiān de shēnghuó shì zěnyàng de?",e:"If you could, what would you most wish your daily life to look like? What would make you happy?"},
+         s:{z:"希望每天有人来陪我聊聊天，有热饭吃，身体不那么痛，偶尔能出去走走。",e:"I hope to have someone come and chat with me each day, have a hot meal, not be in so much pain, and occasionally go out for a walk."}},
+        {v:{z:"我们会把您的心愿记下来，尽量为您安排。您的快乐对我们来说非常重要。",p:"Wǒmen huì bǎ nín de xīnyuàn jì xiàlái. Nín de kuàilè duì wǒmen lái shuō fēicháng zhòngyào.",e:"We will note down your wishes and do our best to arrange things for you. Your happiness is very important to us."},
+         s:{z:"谢谢你，能有人这样关心我，让我觉得自己还是有价值的。",e:"Thank you. Having someone care about me like this makes me feel that I still have worth and value."}},
+      ]},
+    ]
+  }
+};
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let sec  = 'badl';
+let mode = 'browse';
+let ti   = 0;
+let spd  = 0.85;
+let voices = [];
+let voiceReady = false;
+
+// ════════════════════════════════════════════
+// VOICE LOADING — iOS-safe
+// ════════════════════════════════════════════
+function loadVoices(){
+  voices = window.speechSynthesis.getVoices();
+  if(voices.length && !voiceReady){
+    voiceReady = true;
+    const v = bestVoice();
+    const bar = document.getElementById('vbar');
+    if(v){
+      bar.className='voice-bar ok';
+      bar.textContent='✅ Voice ready: '+v.name+' ('+v.lang+') — tap any Hear button';
+    } else {
+      bar.className='voice-bar warn';
+      bar.textContent='⚠️ No Chinese voice found. iPhone: Settings → Accessibility → Spoken Content → Voices → Chinese (Mandarin)';
+    }
+  }
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+setTimeout(loadVoices,600);
+setTimeout(loadVoices,1800);
+
+function bestVoice(){
+  if(!voices.length) voices = window.speechSynthesis.getVoices();
+  // iOS native voice names
+  const iosN=['tingting','mei-jia','meijia','sin-ji','sinji','li-mu','yu-shu'];
+  for(const n of iosN){
+    const v=voices.find(x=>x.name.toLowerCase().includes(n));
+    if(v) return v;
+  }
+  for(const l of ['zh-CN','zh_CN','zh-HK','zh-TW']){
+    const v=voices.find(x=>x.lang===l);
+    if(v) return v;
+  }
+  return voices.find(x=>x.lang.startsWith('zh'))||null;
+}
+
+// ════════════════════════════════════════════
+// SPEAK — works on local file + iOS
+// ════════════════════════════════════════════
+function speak(text, rate, btn){
+  if(!voiceReady) loadVoices();
+  if(window.speechSynthesis.speaking||window.speechSynthesis.pending)
+    window.speechSynthesis.cancel();
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang  = 'zh-CN';
+  u.rate  = rate || spd;
+  u.pitch = 1.0;
+  const v = bestVoice();
+  if(v) u.voice = v;
+
+  if(btn){
+    btn.classList.add('playing');
+    u.onend  = ()=>btn.classList.remove('playing');
+    u.onerror= ()=>btn.classList.remove('playing');
+  }
+  // Small delay on iOS prevents first syllable being clipped
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if(isIOS) setTimeout(()=>window.speechSynthesis.speak(u), 80);
+  else window.speechSynthesis.speak(u);
+}
+
+// ════════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════════
+function setMode(m){
+  mode=m; ti=0;
+  document.getElementById('mBrowse').className=m==='browse'?'on':'';
+  document.getElementById('mTrain').className =m==='train' ?'on':'';
+  render();
+}
+
+function switchSec(s){
+  sec=s; ti=0;
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.className='tab';
+    if(t.dataset.s===s) t.classList.add({badl:'ab',iadl:'ai',social:'as'}[s]);
+  });
+  render();
+}
+
+function flatPairs(){
+  const out=[];
+  D[sec].ss.forEach((sub,si)=>sub.ps.forEach((p,pi)=>out.push({p,st:sub.t,si,pi})));
+  return out;
+}
+
+function esc(s){ return(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+// ════════════════════════════════════════════
+// HEAR BUTTON HTML
+// ════════════════════════════════════════════
+function hb(zh, rate, type, label){
+  // type: v=volunteer, s=senior; rate determines slow vs normal
+  const cls = rate>=0.8
+    ? (type==='s'?'ns':'nb '+sec.charAt(0))
+    : (type==='s'?'ss':'sl '+sec.charAt(0));
+  // map section initial to actual css class suffix
+  const cm = {b:'nb',i:'ni',s:'np'};
+  const cs = {b:'sl',i:'si',s:'sp'};
+  const c  = rate>=0.8 ? (type==='s'?'ns':cm[sec.charAt(0)]) : (type==='s'?'ss':cs[sec.charAt(0)]);
+  return `<button class="hbtn ${c}" onclick="speak('${esc(zh)}',${rate},this)">${label}</button>`;
+}
+
+// ════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════
+function render(){
+  const showEx = document.getElementById('exChk').checked;
+  const pg = document.getElementById('pg');
+  pg.innerHTML='';
+  mode==='browse' ? renderBrowse(pg,showEx) : renderTrain(pg,showEx);
+}
+
+function renderBrowse(pg,showEx){
+  const data = D[sec];
+  data.ss.forEach(sub=>{
+    const wrap=document.createElement('div');
+    wrap.className='subsec';
+    wrap.innerHTML=`<div class="subsec-hdr" style="background:${data.bg};color:${data.tc}">${sub.t}</div>`;
+    sub.ps.forEach(pair=>{
+      // Volunteer card
+      const vc=document.createElement('div');
+      vc.className='qpair';
+      vc.innerHTML=`<div class="qcard v">
+        <span class="badge bv">You — Volunteer 志愿者</span>
+        <div class="zh">${pair.v.z}</div>
+        <div class="py">${pair.v.p}</div>
+        <div class="en">${pair.v.e}</div>
+        <div class="acts">
+          ${hb(pair.v.z,spd,'v','🔊 Hear')}
+          ${hb(pair.v.z,0.6,'v','🐢 Slow')}
+        </div></div>`;
+      wrap.appendChild(vc);
+      // Senior example
+      if(showEx&&pair.s){
+        const sc=document.createElement('div');
+        sc.className='qpair';
+        sc.innerHTML=`<div class="qcard s">
+          <span class="badge bs">Senior 长者 — Typical Response</span>
+          <div class="zh">${pair.s.z}</div>
+          <div class="en sg">${pair.s.e}</div>
+          <div class="acts">
+            ${hb(pair.s.z,spd,'s','🔊 Hear')}
+            ${hb(pair.s.z,0.6,'s','🐢 Slow')}
+          </div></div>`;
+        wrap.appendChild(sc);
+      }
+    });
+    pg.appendChild(wrap);
+  });
+}
+
+function renderTrain(pg,showEx){
+  const data = D[sec];
+  const flat = flatPairs();
+  if(!flat.length) return;
+  ti = Math.max(0,Math.min(flat.length-1,ti));
+  const {p,st} = flat[ti];
+  const pct = Math.round((ti+1)/flat.length*100);
+
+  const card=document.createElement('div');
+  card.className='tcard';
+  card.innerHTML=`
+    <div class="tprog">Question ${ti+1} of ${flat.length}</div>
+    <div class="tsub" style="background:${data.bg};color:${data.tc}">${st}</div>
+    <div class="tzh">${p.v.z}</div>
+    <div class="tpy">${p.v.p}</div>
+    <div class="ten">${p.v.e}</div>
+    <div class="thear">
+      <button class="tbtn" style="background:${data.c};color:#fff"
+        onclick="speak('${esc(p.v.z)}',spd,this)">🔊 Hear</button>
+      <button class="tbtn" style="background:#555;color:#fff"
+        onclick="speak('${esc(p.v.z)}',0.6,this)">🐢 Slow</button>
+    </div>
+    ${showEx&&p.s?`
+    <div class="exbox">
+      <div class="exlbl">💬 Typical Senior Response</div>
+      <div class="exzh">${p.s.z}</div>
+      <div class="exen">${p.s.e}</div>
+      <button class="exbtn" onclick="speak('${esc(p.s.z)}',spd,this)">🔊 Hear Response</button>
+    </div>`:''}
+    <div class="tnav">
+      <button class="navb" onclick="tn(-1)" ${ti===0?'disabled':''}>◀ Prev</button>
+      <div class="tctr">
+        <div class="pbar"><div class="pfill" style="width:${pct}%;background:${data.c}"></div></div>
+        ${ti+1} / ${flat.length}
+      </div>
+      <button class="navb" onclick="tn(1)" ${ti===flat.length-1?'disabled':''}>Next ▶</button>
+    </div>`;
+  pg.appendChild(card);
+}
+
+function tn(d){
+  ti=Math.max(0,Math.min(flatPairs().length-1,ti+d));
+  window.speechSynthesis.cancel();
+  render();
+}
+
+// ── INIT ──
+render();
+</script>
+</body>
+</html>
